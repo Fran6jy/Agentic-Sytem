@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-math-assistant
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini

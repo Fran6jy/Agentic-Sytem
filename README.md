@@ -14,7 +14,7 @@ A portfolio-ready math assistant that lets users ask natural-language math quest
 ```bash
 npm install
 cp .env.example .env
-npm start
+npm run dev:full
 ```
 
 Add `OPENAI_API_KEY` to `.env` for live LangChain/OpenAI tool calling. Without a key, the app runs in demo mode and still executes the math toolkit locally.
@@ -22,6 +22,18 @@ Add `OPENAI_API_KEY` to `.env` for live LangChain/OpenAI tool calling. Without a
 Frontend: `http://127.0.0.1:5173`
 
 API: `http://127.0.0.1:8787`
+
+## Production
+
+The app is ready for a single Node web service. Express serves both the API and the built React app.
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+For Render, connect this GitHub repo and use the included `render.yaml`. Add `OPENAI_API_KEY` as a secret environment variable to enable live LangChain/OpenAI tool calling. Without it, the hosted app stays usable in demo mode.
 
 ## Example Prompts
 

@@ -1,11 +1,16 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { HumanMessage, SystemMessage, ToolMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { mathTools, toolMap } from "./mathTools.js";
 import { runDemoMathAgent } from "./demoRouter.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.resolve(__dirname, "../dist");
 const app = express();
 const port = Number(process.env.PORT || 8787);
 
@@ -85,6 +90,12 @@ app.post("/api/ask", async (request, response) => {
   }
 });
 
+app.use(express.static(distPath));
+
+app.get(/.*/, (_request, response) => {
+  response.sendFile(path.join(distPath, "index.html"));
+});
+
 app.listen(port, () => {
-  console.log(`AI Math Assistant API listening on http://127.0.0.1:${port}`);
+  console.log(`AI Math Assistant listening on http://127.0.0.1:${port}`);
 });

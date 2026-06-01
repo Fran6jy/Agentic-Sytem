@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "server": "node server/index.js",
-    "start": "concurrently \"npm run server\" \"npm run dev\"",
+    "dev:api": "node server/index.js",
+    "dev:full": "concurrently \"npm run dev:api\" \"npm run dev\"",
+    "start": "node server/index.js",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "lint": "eslint ."
