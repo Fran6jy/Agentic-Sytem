@@ -13,6 +13,15 @@ const __dirname = path.dirname(__filename);
 const distPath = path.resolve(__dirname, "../dist");
 const app = express();
 const port = Number(process.env.PORT || 8787);
+const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
+const baseURL = process.env.OPENAI_BASE_URL || process.env.OPENROUTER_BASE_URL;
+const modelName = process.env.OPENAI_MODEL || "openai/gpt-oss-120b:free";
+const openRouterHeaders = baseURL?.includes("openrouter.ai")
+  ? {
+      "HTTP-Referer": process.env.OPENROUTER_APP_URL || "https://github.com/Fran6jy/Agentic-Sytem",
+      "X-Title": process.env.OPENROUTER_APP_NAME || "AI Math Assistant"
+    }
+  : undefined;
 
 app.use(cors());
 app.use(express.json());
@@ -24,8 +33,13 @@ When useful, mention the exact tool calls used.`;
 
 const runLangChainAgent = async (question) => {
   const model = new ChatOpenAI({
-    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-    temperature: 0.1
+    apiKey,
+    model: modelName,
+    temperature: 0.1,
+    configuration: {
+      baseURL,
+      defaultHeaders: openRouterHeaders
+    }
   }).bindTools(mathTools);
 
   const messages = [
@@ -66,7 +80,9 @@ const runLangChainAgent = async (question) => {
 app.get("/api/health", (_request, response) => {
   response.json({
     ok: true,
-    mode: process.env.OPENAI_API_KEY ? "langchain" : "demo",
+    mode: apiKey ? "langchain" : "demo",
+    model: apiKey ? modelName : "local-demo",
+    baseURL: baseURL || "default-openai",
     tools: mathTools.map((mathTool) => mathTool.name)
   });
 });
@@ -79,7 +95,7 @@ app.post("/api/ask", async (request, response) => {
   }
 
   try {
-    const result = process.env.OPENAI_API_KEY
+    const result = apiKey
       ? await runLangChainAgent(question)
       : await runDemoMathAgent(question);
     response.json(result);

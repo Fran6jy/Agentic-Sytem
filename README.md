@@ -5,7 +5,7 @@ A portfolio-ready math assistant that lets users ask natural-language math quest
 ## Highlights
 
 - LangChain tool calling with structured Zod schemas
-- Express API with an OpenAI-powered path and a local demo fallback
+- Express API with an OpenRouter/OpenAI-compatible path and a local demo fallback
 - React interface with example prompts, trace visibility, and polished responsive styling
 - Math toolkit powered by `mathjs`
 
@@ -17,7 +17,7 @@ cp .env.example .env
 npm run dev:full
 ```
 
-Add `OPENAI_API_KEY` to `.env` for live LangChain/OpenAI tool calling. Without a key, the app runs in demo mode and still executes the math toolkit locally.
+Add `OPENAI_API_KEY` to `.env` for live LangChain tool calling. The default `.env.example` is configured for OpenRouter's free GPT-OSS model. Without a key, the app runs in demo mode and still executes the math toolkit locally.
 
 Frontend: `http://127.0.0.1:5173`
 
@@ -33,7 +33,17 @@ npm run build
 npm start
 ```
 
-For Render, connect this GitHub repo and use the included `render.yaml`. Add `OPENAI_API_KEY` as a secret environment variable to enable live LangChain/OpenAI tool calling. Without it, the hosted app stays usable in demo mode.
+For Render, connect this GitHub repo and use the included `render.yaml`. Add `OPENAI_API_KEY` as a secret environment variable to enable live LangChain tool calling through OpenRouter. Without it, the hosted app stays usable in demo mode.
+
+Recommended Render environment:
+
+```txt
+OPENAI_API_KEY=<your OpenRouter API key>
+OPENAI_BASE_URL=https://openrouter.ai/api/v1
+OPENAI_MODEL=openai/gpt-oss-120b:free
+```
+
+The server also supports other OpenAI-compatible providers by changing `OPENAI_BASE_URL` and `OPENAI_MODEL`.
 
 ## Example Prompts
 
@@ -45,4 +55,4 @@ For Render, connect this GitHub repo and use the included `render.yaml`. Add `OP
 
 ## Architecture
 
-The backend exposes `POST /api/ask`. When an OpenAI key is present, it binds the LangChain tools to `ChatOpenAI`, lets the model choose the required tool calls, executes those tools, then asks the model to explain the result. When no key is present, it uses a small local intent router so the UI remains fully demonstrable.
+The backend exposes `POST /api/ask`. When an API key is present, it binds the LangChain tools to `ChatOpenAI`, points the client at the configured OpenAI-compatible base URL, lets the model choose the required tool calls, executes those tools, then asks the model to explain the result. When no key is present, it uses a small local intent router so the UI remains fully demonstrable.

@@ -8,5 +8,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_BASE_URL
+        value: https://openrouter.ai/api/v1
       - key: OPENAI_MODEL
-        value: gpt-4o-mini
+        value: openai/gpt-oss-120b:free
+      - key: OPENROUTER_APP_NAME
+        value: AI Math Assistant
+      - key: OPENROUTER_APP_URL
+        value: https://github.com/Fran6jy/Agentic-Sytem
