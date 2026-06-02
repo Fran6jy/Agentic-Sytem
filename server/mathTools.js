@@ -122,6 +122,29 @@ export const mathTools = [
       matrix: z.array(z.array(z.number())).describe("Coefficient matrix A."),
       vector: z.array(z.number()).describe("Result vector b.")
     })
+  }),
+  tool(({ expression }) => {
+    const value = evaluate(expression);
+    const re = typeof value === "number" ? value : value.re ?? 0;
+    const im = typeof value === "number" ? 0 : value.im ?? 0;
+    const reR = round(re);
+    const imR = round(im);
+    const form = imR === 0
+      ? `${reR}`
+      : `${reR} ${imR < 0 ? "-" : "+"} ${Math.abs(imR)}i`;
+    return JSON.stringify({
+      result: form,
+      real: reR,
+      imaginary: imR,
+      modulus: round(Math.hypot(re, im)),
+      argumentRadians: round(Math.atan2(im, re))
+    });
+  }, {
+    name: "complex_arithmetic",
+    description: "Evaluate a complex-number expression that uses 'i' as the imaginary unit. Returns the result in a + bi form along with its modulus and argument. Use for adding, multiplying, dividing, or taking powers and magnitudes of complex numbers with concrete numeric values.",
+    schema: z.object({
+      expression: z.string().describe("A mathjs complex expression, such as '(3 + 2i) / (1 - 2i)' or 'abs(5 + 12i)'.")
+    })
   })
 ];
 

@@ -67,7 +67,8 @@ const examples = [
   "Differentiate x^3 + 4x^2 - 7x + 9",
   "Solve 2x + 9 = 33 for x",
   "Find the determinant of [[4, 2], [1, 3]]",
-  "Calculate the mean, median, and standard deviation of 12, 18, 21, 21, 30"
+  "Calculate the mean, median, and standard deviation of 12, 18, 21, 21, 30",
+  "Divide (3 + 2i) by (1 - 2i) and give the modulus"
 ];
 
 const capabilities = [
