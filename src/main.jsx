@@ -157,7 +157,13 @@ function App() {
       setQuestion((current) => (current ? `${current} ${transcript}` : transcript));
     };
     recognition.onerror = (errorEvent) => {
-      setError(`Voice input error: ${errorEvent.error}`);
+      const messages = {
+        network: "Voice input couldn't reach the speech service. This browser feature relies on Google's servers and works most reliably in desktop Google Chrome — it often fails in Firefox, Brave, or Chromium on Linux. You can still type or attach a photo.",
+        "not-allowed": "Microphone access was blocked. Allow mic permission for this site and try again.",
+        "service-not-allowed": "Microphone access was blocked. Allow mic permission for this site and try again.",
+        "no-speech": "Didn't catch any speech — please try again."
+      };
+      setError(messages[errorEvent.error] || `Voice input error: ${errorEvent.error}`);
       setIsListening(false);
     };
     recognition.onend = () => setIsListening(false);
