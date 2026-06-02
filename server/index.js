@@ -82,11 +82,19 @@ const runLangChainAgent = async (question) => {
   for (const toolCall of firstResponse.tool_calls || []) {
     const selectedTool = toolMap.get(toolCall.name);
     if (!selectedTool) continue;
-    const result = await selectedTool.invoke(toolCall.args);
+    let result;
+    let failed = false;
+    try {
+      result = await selectedTool.invoke(toolCall.args);
+    } catch (toolError) {
+      failed = true;
+      result = `Error: ${toolError instanceof Error ? toolError.message : "tool failed"}. Try a different approach or solve it directly.`;
+    }
     trace.push({
       name: toolCall.name,
       args: toolCall.args,
-      result
+      result,
+      failed
     });
     messages.push(new ToolMessage({
       content: String(result),

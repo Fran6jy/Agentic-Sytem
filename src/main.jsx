@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
+  AlertTriangle,
   BrainCircuit,
   Calculator,
   CheckCircle2,
@@ -303,9 +304,9 @@ function App() {
               </div>
               <div className="trace-grid">
                 {latest.trace.map((step, index) => (
-                  <article className="trace-card" key={`${step.name}-${index}`}>
+                  <article className={`trace-card${step.failed ? " failed" : ""}`} key={`${step.name}-${index}`}>
                     <div>
-                      <CheckCircle2 size={18} />
+                      {step.failed ? <AlertTriangle size={18} /> : <CheckCircle2 size={18} />}
                       <strong>{step.name}</strong>
                     </div>
                     <code>{JSON.stringify(step.args)}</code>

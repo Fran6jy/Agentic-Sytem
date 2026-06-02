@@ -452,6 +452,15 @@ button {
   color: #176b5d;
 }
 
+.trace-card.failed {
+  border-color: rgba(164, 58, 44, 0.4);
+  background: rgba(164, 58, 44, 0.05);
+}
+
+.trace-card.failed div {
+  color: #a43a2c;
+}
+
 .trace-card code {
   display: block;
   overflow-wrap: anywhere;
