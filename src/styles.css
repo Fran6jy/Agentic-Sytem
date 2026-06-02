@@ -293,6 +293,17 @@ button {
   line-height: 1.5;
 }
 
+.extracted-note summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: #176b5d;
+  list-style-position: inside;
+}
+
+.extracted-note[open] summary {
+  margin-bottom: 8px;
+}
+
 .answer-body > :first-child,
 .extracted-note > :first-child {
   margin-top: 0;

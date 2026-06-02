@@ -294,10 +294,10 @@ function App() {
                 </div>
               </div>
               {latest.extractedFromImage ? (
-                <div className="extracted-note">
-                  <strong>Read from image:</strong>
+                <details className="extracted-note">
+                  <summary>What the assistant read from your image</summary>
                   <MathMarkdown text={latest.extractedFromImage} />
-                </div>
+                </details>
               ) : null}
               <div className="answer-body">
                 <MathMarkdown text={latest.answer} />

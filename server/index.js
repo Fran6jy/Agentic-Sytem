@@ -32,10 +32,11 @@ Use the provided tools for every calculation instead of mental arithmetic.
 Give a concise answer, then a short explanation of what was computed.
 When useful, mention the exact tool calls used.`;
 
-const visionPrompt = `You read images of math problems.
-Transcribe every equation, expression, and instruction you can see into clear plain text.
-Preserve numbers, operators, exponents (use ^), fractions, and matrices exactly.
-Output only the transcribed problem statement, with no commentary or solution.`;
+const visionPrompt = `You are an OCR transcriber, not a solver.
+Reproduce ONLY the math problem exactly as printed in the image.
+Preserve numbers, operators, exponents (use ^), fractions, matrices, and part labels like (a)/(b).
+Do NOT solve it. Do NOT show any working, steps, reasoning, or final answer.
+Output just the question text and nothing else.`;
 
 const makeModel = (model, options = {}) => {
   const chat = new ChatOpenAI({
