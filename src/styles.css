@@ -293,6 +293,34 @@ button {
   line-height: 1.5;
 }
 
+.answer-body > :first-child,
+.extracted-note > :first-child {
+  margin-top: 0;
+}
+
+.answer-body > :last-child,
+.extracted-note > :last-child {
+  margin-bottom: 0;
+}
+
+.answer-body p,
+.extracted-note p {
+  margin: 8px 0;
+}
+
+.answer-body ul,
+.answer-body ol {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+
+.answer-body .katex-display {
+  margin: 12px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(164, 58, 44, 0.4); }
   50% { box-shadow: 0 0 0 8px rgba(164, 58, 44, 0); }

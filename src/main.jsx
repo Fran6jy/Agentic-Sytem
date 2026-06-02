@@ -16,7 +16,36 @@ import {
   Volume2,
   X
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import "./styles.css";
+
+// The model replies with LaTeX delimiters \[ \] and \( \); remark-math
+// expects $$ $$ and $ $, so normalize before rendering.
+const normalizeMath = (text) =>
+  String(text || "")
+    .replace(/\\\[([\s\S]*?)\\\]/g, (_match, body) => `\n\n$$${body}$$\n\n`)
+    .replace(/\\\(([\s\S]*?)\\\)/g, (_match, body) => `$${body}$`);
+
+// Strip LaTeX/markdown markup so read-aloud speaks words, not "backslash frac".
+const toSpeech = (text) =>
+  String(text || "")
+    .replace(/\\[[\]()]/g, " ")
+    .replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, "$1 over $2")
+    .replace(/\\sqrt\{([^{}]*)\}/g, "square root of $1")
+    .replace(/\\boxed\{([^{}]*)\}/g, "$1")
+    .replace(/\\(displaystyle|left|right|quad|qquad|Longrightarrow|Rightarrow|pm|cdot|times)/g, " ")
+    .replace(/[\\${}*_#^]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const MathMarkdown = ({ text }) => (
+  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+    {normalizeMath(text)}
+  </ReactMarkdown>
+);
 
 const SpeechRecognition =
   typeof window !== "undefined"
@@ -253,7 +282,7 @@ function App() {
                     <button
                       type="button"
                       className="icon-button"
-                      onClick={() => speakAnswer(latest.answer)}
+                      onClick={() => speakAnswer(toSpeech(latest.answer))}
                       title="Read the answer aloud"
                     >
                       <Volume2 size={18} />
@@ -263,11 +292,14 @@ function App() {
                 </div>
               </div>
               {latest.extractedFromImage ? (
-                <p className="extracted-note">
-                  <strong>Read from image:</strong> {latest.extractedFromImage}
-                </p>
+                <div className="extracted-note">
+                  <strong>Read from image:</strong>
+                  <MathMarkdown text={latest.extractedFromImage} />
+                </div>
               ) : null}
-              <div className="answer-body">{latest.answer}</div>
+              <div className="answer-body">
+                <MathMarkdown text={latest.answer} />
+              </div>
               <div className="trace-grid">
                 {latest.trace.map((step, index) => (
                   <article className="trace-card" key={`${step.name}-${index}`}>
