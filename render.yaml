@@ -14,6 +14,8 @@ services:
         value: https://openrouter.ai/api/v1
       - key: OPENAI_MODEL
         value: openai/gpt-oss-120b:free
+      - key: OPENAI_VISION_MODEL
+        value: nvidia/nemotron-nano-12b-v2-vl:free
       - key: OPENROUTER_APP_NAME
         value: AI Math Assistant
       - key: OPENROUTER_APP_URL

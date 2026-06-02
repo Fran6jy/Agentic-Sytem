@@ -8,6 +8,8 @@ A portfolio-ready math assistant that lets users ask natural-language math quest
 - Express API with an OpenRouter/OpenAI-compatible path and a local demo fallback
 - React interface with example prompts, trace visibility, and polished responsive styling
 - Math toolkit powered by `mathjs`
+- Image upload: a free vision model reads a photo of a problem, then the tool agent solves it
+- Voice notes: dictate questions and have answers read aloud via the browser Web Speech API
 
 ## Run Locally
 
@@ -41,9 +43,10 @@ Recommended Render environment:
 OPENAI_API_KEY=<your OpenRouter API key>
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
 OPENAI_MODEL=openai/gpt-oss-120b:free
+OPENAI_VISION_MODEL=nvidia/nemotron-nano-12b-v2-vl:free
 ```
 
-The server also supports other OpenAI-compatible providers by changing `OPENAI_BASE_URL` and `OPENAI_MODEL`.
+The server also supports other OpenAI-compatible providers by changing `OPENAI_BASE_URL` and `OPENAI_MODEL`. `OPENAI_VISION_MODEL` selects the multimodal model used to read uploaded images; the text model (`OPENAI_MODEL`) does the actual solving with the math tools. Voice input/output runs entirely in the browser and needs no extra configuration.
 
 ## Example Prompts
 
@@ -55,4 +58,6 @@ The server also supports other OpenAI-compatible providers by changing `OPENAI_B
 
 ## Architecture
 
-The backend exposes `POST /api/ask`. When an API key is present, it binds the LangChain tools to `ChatOpenAI`, points the client at the configured OpenAI-compatible base URL, lets the model choose the required tool calls, executes those tools, then asks the model to explain the result. When no key is present, it uses a small local intent router so the UI remains fully demonstrable.
+The backend exposes `POST /api/ask`, accepting a `question` and/or an `image` (base64 data URL). When an API key is present, it binds the LangChain tools to `ChatOpenAI`, points the client at the configured OpenAI-compatible base URL, lets the model choose the required tool calls, executes those tools, then asks the model to explain the result. When no key is present, it uses a small local intent router so the UI remains fully demonstrable.
+
+When an image is attached, the vision model first transcribes the problem from the picture; that text then flows into the same tool-calling agent, so calculations stay exact and the tool trace is preserved (the transcription is returned as `extractedFromImage`). Image understanding requires an API key — demo mode is text-only. Voice input (dictation) and output (read-aloud) are implemented on the frontend with the browser's Web Speech API.
