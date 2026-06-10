@@ -72,37 +72,61 @@ const runLangChainAgent = async (question) => {
   ];
 
   const trace = [];
-  const firstResponse = await model.invoke(messages);
-  messages.push(firstResponse);
+  const maxRounds = 6;
+  let response = await model.invoke(messages);
+  messages.push(response);
 
-  for (const toolCall of firstResponse.tool_calls || []) {
-    const selectedTool = toolMap.get(toolCall.name);
-    if (!selectedTool) continue;
-    let result;
-    let failed = false;
-    try {
-      result = await selectedTool.invoke(toolCall.args);
-    } catch (toolError) {
-      failed = true;
-      result = `Error: ${toolError instanceof Error ? toolError.message : "tool failed"}. Try a different approach or solve it directly.`;
+  // Keep executing tool calls until the model answers in text;
+  // multi-step problems often need several rounds of calculations.
+  for (let round = 0; round < maxRounds && response.tool_calls?.length; round += 1) {
+    for (const toolCall of response.tool_calls) {
+      const selectedTool = toolMap.get(toolCall.name);
+      let result;
+      let failed = false;
+      if (!selectedTool) {
+        failed = true;
+        result = `Error: unknown tool "${toolCall.name}".`;
+      } else {
+        try {
+          result = await selectedTool.invoke(toolCall.args);
+        } catch (toolError) {
+          failed = true;
+          result = `Error: ${toolError instanceof Error ? toolError.message : "tool failed"}. Try a different approach or solve it directly.`;
+        }
+      }
+      trace.push({
+        name: toolCall.name,
+        args: toolCall.args,
+        result,
+        failed
+      });
+      messages.push(new ToolMessage({
+        content: String(result),
+        name: toolCall.name,
+        tool_call_id: toolCall.id
+      }));
     }
-    trace.push({
-      name: toolCall.name,
-      args: toolCall.args,
-      result,
-      failed
-    });
-    messages.push(new ToolMessage({
-      content: String(result),
-      name: toolCall.name,
-      tool_call_id: toolCall.id
-    }));
+    response = await model.invoke(messages);
+    messages.push(response);
   }
 
-  const finalResponse = trace.length ? await model.invoke(messages) : firstResponse;
+  let answer = typeof response.content === "string"
+    ? response.content.trim()
+    : String(response.content ?? "").trim();
+
+  // If the model ran out of rounds (or returned empty text), force a summary.
+  if (!answer) {
+    messages.push(new HumanMessage(
+      "Using the tool results above, state the final answer now in plain text. Do not call any more tools."
+    ));
+    const summary = await makeModel(modelName).invoke(messages);
+    answer = typeof summary.content === "string"
+      ? summary.content.trim()
+      : String(summary.content ?? "").trim();
+  }
 
   return {
-    answer: finalResponse.content,
+    answer: answer || "The assistant could not produce an answer for that one. Please try rephrasing.",
     mode: "langchain",
     trace,
     toolsAvailable: mathTools.map((mathTool) => mathTool.name)
