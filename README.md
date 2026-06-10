@@ -35,6 +35,8 @@ npm run build
 npm start
 ```
 
+For Vercel, the included `vercel.json` builds the Vite frontend and serves the Express API as a serverless function from `api/index.js`. Deploy with `vercel deploy --prod` and add the environment variables below to the project. Uploaded photos are downscaled client-side to stay within serverless request body limits.
+
 For Render, connect this GitHub repo and use the included `render.yaml`. Add `OPENAI_API_KEY` as a secret environment variable to enable live LangChain tool calling through OpenRouter. Without it, the hosted app stays usable in demo mode.
 
 Recommended Render environment:

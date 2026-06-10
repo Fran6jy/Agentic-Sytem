@@ -62,6 +62,29 @@ const fileToDataUrl = (file) =>
     reader.readAsDataURL(file);
   });
 
+// Downscale large photos so the payload stays under serverless body limits
+// (Vercel caps requests around 4.5MB) while keeping text readable for OCR.
+const MAX_IMAGE_DIMENSION = 1600;
+
+const shrinkImage = (dataUrl) =>
+  new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(img.width, img.height));
+      if (scale === 1 && dataUrl.length < 2_000_000) {
+        resolve(dataUrl);
+        return;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+
 const examples = [
   "What is 18% of 245 plus 37 squared?",
   "Differentiate x^3 + 4x^2 - 7x + 9",
@@ -128,7 +151,7 @@ function App() {
       return;
     }
     try {
-      const dataUrl = await fileToDataUrl(file);
+      const dataUrl = await shrinkImage(await fileToDataUrl(file));
       setImage({ name: file.name, dataUrl });
       setError("");
     } catch (caughtError) {
