@@ -120,6 +120,32 @@ button {
   box-shadow: 0 18px 60px rgba(16, 35, 31, 0.09);
 }
 
+.topbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coffee-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(240, 180, 41, 0.55);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #7a5a10;
+  background: rgba(240, 180, 41, 0.18);
+  text-decoration: none;
+  box-shadow: 0 18px 60px rgba(16, 35, 31, 0.09);
+}
+
+.coffee-button:hover {
+  background: rgba(240, 180, 41, 0.32);
+  transform: translateY(-1px);
+}
+
 .brand-mark {
   display: grid;
   place-items: center;

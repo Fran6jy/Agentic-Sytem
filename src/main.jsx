@@ -5,6 +5,7 @@ import {
   BrainCircuit,
   Calculator,
   CheckCircle2,
+  Coffee,
   FlaskConical,
   FunctionSquare,
   ImagePlus,
@@ -216,9 +217,21 @@ function App() {
             <span className="brand-mark"><BrainCircuit size={22} /></span>
             <span>AI Math Assistant</span>
           </div>
-          <div className="status-pill">
-            <Activity size={16} />
-            {modeLabel}
+          <div className="topbar-actions">
+            <a
+              className="coffee-button"
+              href="https://paypal.me/Fran6jy"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Support this project with a coffee via PayPal"
+            >
+              <Coffee size={16} />
+              <span>Buy me a coffee</span>
+            </a>
+            <div className="status-pill">
+              <Activity size={16} />
+              {modeLabel}
+            </div>
           </div>
         </nav>
 
