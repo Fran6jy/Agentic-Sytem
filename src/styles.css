@@ -1501,3 +1501,92 @@ main {
 }
 
 sup { font-size: 0.7em; line-height: 0; }
+
+/* ---------- Install / home screen ---------- */
+
+body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+
+.install-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--chalk);
+  color: var(--board-deep);
+  font-size: 0.88rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.install-button:hover { background: var(--yellow); }
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  animation: rise 0.2s both;
+}
+
+.sheet {
+  position: relative;
+  width: min(460px, 100%);
+  padding: 26px 22px calc(24px + env(safe-area-inset-bottom));
+  border-top: 10px solid var(--wood);
+  border-radius: 18px 18px 0 0;
+  background: var(--board);
+  text-align: center;
+  animation: rise 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.sheet img { border-radius: 14px; }
+.sheet h2 { margin: 12px 0 16px; font-family: var(--hand); font-size: 1.5rem; }
+
+.sheet ol {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.sheet li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; line-height: 1.5; }
+.sheet li svg { color: var(--blue); }
+
+.sheet-step {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  height: 26px;
+  border: 1.5px solid var(--yellow);
+  border-radius: 50%;
+  color: var(--yellow);
+  font-family: var(--hand);
+  font-weight: 700;
+}
+
+.sheet-note { margin: 18px 0 0; color: var(--chalk-dim); font-size: 0.85rem; }
+
+.sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--chalk-faint);
+}
+
+@media (max-width: 640px) {
+  .install-button span { display: none; }
+  .install-button { padding: 8px 10px; }
+}

@@ -15,6 +15,7 @@ import {
   Volume2,
   X
 } from "lucide-react";
+import InstallApp from "./components/InstallApp.jsx";
 import AnswerBoard from "./components/AnswerBoard.jsx";
 import Challenge from "./components/Challenge.jsx";
 import MathMarkdown, { toSpeech } from "./components/MathMarkdown.jsx";
@@ -283,6 +284,7 @@ function App() {
               <span style={{ width: `${level.into}%` }} />
             </span>
           </div>
+          <InstallApp />
           <a
             className="coffee"
             href="https://paypal.me/Fran6jy"
@@ -529,6 +531,10 @@ function App() {
       </footer>
     </div>
   );
+}
+
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
 }
 
 createRoot(document.getElementById("root")).render(
