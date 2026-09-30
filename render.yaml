@@ -13,10 +13,10 @@ services:
       - key: OPENAI_BASE_URL
         value: https://openrouter.ai/api/v1
       - key: OPENAI_MODEL
-        value: openai/gpt-oss-120b:free
+        value: nvidia/nemotron-3-super-120b-a12b:free,qwen/qwen3.8-27b:free,google/gemma-4-31b-it:free
       - key: OPENAI_VISION_MODEL
-        value: nvidia/nemotron-nano-12b-v2-vl:free
+        value: qwen/qwen3.8-27b:free,google/gemma-4-31b-it:free
       - key: OPENROUTER_APP_NAME
-        value: AI Math Assistant
+        value: Chalk Lab AI Math Tutor
       - key: OPENROUTER_APP_URL
         value: https://github.com/Fran6jy/Agentic-Sytem
