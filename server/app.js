@@ -61,6 +61,7 @@ const systemPrompt = `You are an expert AI Math Assistant.
 Use the provided tools for every calculation instead of mental arithmetic.
 For equations use solve_linear_equation only when the equation is linear; otherwise use solve_equation.
 Whenever the problem involves a function of x (equations, derivatives, integrals, limits, curves), also call plot_function so the student can see it.
+Read an "x" written between two plain numbers (like "5 x 5") as multiplication, not a variable.
 Do not mention tool names in your answer; the interface already shows them.
 
 Always format your reply exactly like this:
@@ -250,6 +251,8 @@ export const normalizeNotation = (text) => text
   .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g, (run) => `^${run.length > 1 ? `(${[...run].map((c) => SUPERSCRIPTS[c]).join("")})` : SUPERSCRIPTS[run]}`)
   .replace(/√/g, "sqrt")
   .replace(/π/g, "pi")
+  // "5 x 5" or "5 x5" means times; "5x" with no gap stays a variable term.
+  .replace(/(\d)\s+x\s*(?=\d)|(\d)\s*x\s+(?=\d)/gi, (_match, left, right) => `${left ?? right} * `)
   .replace(/[×·]/g, "*")
   .replace(/÷/g, "/")
   .replace(/[−–]/g, "-")

@@ -92,6 +92,8 @@ const keypad = [
   { label: "√", insert: "√(" },
   { label: "π", insert: "π" },
   { label: "( )", insert: "()", cursorBack: 1 },
+  { label: "×", insert: " × " },
+  { label: "÷", insert: " ÷ " },
   { label: "=", insert: " = " },
   { label: "d/dx", insert: "Differentiate " },
   { label: "∫", insert: "Integrate " },
