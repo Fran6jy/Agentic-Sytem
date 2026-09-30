@@ -15,6 +15,7 @@ import {
   Volume2,
   X
 } from "lucide-react";
+import ChalkTray, { CHALKS } from "./components/ChalkTray.jsx";
 import InstallApp from "./components/InstallApp.jsx";
 import AnswerBoard from "./components/AnswerBoard.jsx";
 import Challenge from "./components/Challenge.jsx";
@@ -140,6 +141,20 @@ function App() {
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
   const resultRef = useRef(null);
+  const boardRef = useRef(null);
+  const [chalk, setChalk] = useState(() => {
+    try { return localStorage.getItem("chalk-lab-chalk") || "white"; } catch { return "white"; }
+  });
+  const pickChalk = (id) => {
+    setChalk(id);
+    try { localStorage.setItem("chalk-lab-chalk", id); } catch { /* storage blocked */ }
+    textareaRef.current?.focus();
+  };
+  const wipeBoard = () => {
+    setQuestion("");
+    setImage(null);
+    setError("");
+  };
   const { progress, addXp, recordDaily, completeDaily, dailyAnswers } = useProgress();
   const level = levelFor(progress.xp);
   const entry = history[selected];
@@ -322,7 +337,7 @@ function App() {
           </section>
 
           <section className="board-wrap">
-            <form className="board" onSubmit={ask}>
+            <form className="board" ref={boardRef} onSubmit={ask} style={{ "--ink": CHALKS.find((stick) => stick.id === chalk)?.color }}>
               <label htmlFor="question" className="sr-only">Your math question</label>
               <textarea
                 id="question"
@@ -392,9 +407,14 @@ function App() {
               {isListening ? <p className="listening-hint">Listening… say your math question.</p> : null}
               {error ? <p className="error" role="alert">{error}</p> : null}
 
-              <div className="chalk-tray" aria-hidden="true">
-                <span className="chalk c1" /><span className="chalk c2" /><span className="chalk c3" /><span className="eraser" />
-              </div>
+              <ChalkTray
+                boardRef={boardRef}
+                textareaRef={textareaRef}
+                text={question}
+                onWiped={wipeBoard}
+                chalk={chalk}
+                onPickChalk={pickChalk}
+              />
             </form>
 
             <div className="examples" aria-label="Example questions">

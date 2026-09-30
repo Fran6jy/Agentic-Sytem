@@ -1,6 +1,6 @@
 // Chalk Lab service worker: app shell works offline (challenges, graphs, demo UI);
 // questions to /api always go to the network.
-const CACHE = "chalk-lab-v1";
+const CACHE = "chalk-lab-v2";
 const SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
@@ -34,10 +34,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Hashed assets and fonts: cache first.
+  // Only immutable files are cache-first: hashed build assets, icons, and fonts.
+  // Everything else goes straight to the network so a deploy can never be masked.
+  const immutable = url.origin === self.location.origin
+    ? url.pathname.startsWith("/assets/") || url.pathname.startsWith("/icons/")
+    : url.hostname.endsWith("gstatic.com") || url.hostname.endsWith("googleapis.com");
+  if (!immutable) return;
+
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request).then((response) => {
-      if (response.ok && (url.origin === self.location.origin || url.hostname.endsWith("gstatic.com") || url.hostname.endsWith("googleapis.com"))) {
+      if (response.ok) {
         const copy = response.clone();
         caches.open(CACHE).then((cache) => cache.put(request, copy));
       }
