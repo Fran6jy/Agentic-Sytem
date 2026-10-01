@@ -72,8 +72,22 @@ src/
   main.jsx        app shell: board, results, history, tabs
   components/     AnswerBoard, Graph, ChalkTray, Challenge, InstallApp, MathText, MathMarkdown
   lib/            challenge generator, XP/streak progress, confetti
-public/           PWA manifest, service worker, icons
+public/           PWA manifest, service worker, icons, assetlinks.json
+android/          Android app (Trusted Web Activity)
 ```
+
+## Android App
+
+`android/` is a Trusted Web Activity generated with Bubblewrap (package `app.vercel.chalklab.twa`). It opens chalklab.vercel.app full screen, so every web deploy updates the app without a new store release. `public/.well-known/assetlinks.json` proves the site and app belong together.
+
+Build and sign (JDK 17 and the Android SDK, platform 36):
+
+```bash
+cd android
+./gradlew assembleRelease bundleRelease
+```
+
+Then zipalign and sign the APK with `apksigner`, and the AAB with `jarsigner`, using your keystore. The keystore and its password are never committed. After the first Google Play upload, add the Play App Signing SHA-256 fingerprint (Play Console > App integrity) to `assetlinks.json` too.
 
 ## Example Prompts
 
