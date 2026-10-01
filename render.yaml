@@ -19,4 +19,4 @@ services:
       - key: OPENROUTER_APP_NAME
         value: Chalk Lab AI Math Tutor
       - key: OPENROUTER_APP_URL
-        value: https://github.com/Fran6jy/Agentic-Sytem
+        value: https://chalklab.vercel.app

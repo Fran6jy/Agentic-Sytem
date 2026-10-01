@@ -25,7 +25,7 @@ const visionModels = parseModels(
 const modelName = textModels[0];
 const openRouterHeaders = baseURL?.includes("openrouter.ai")
   ? {
-      "HTTP-Referer": process.env.OPENROUTER_APP_URL || "https://github.com/Fran6jy/Agentic-Sytem",
+      "HTTP-Referer": process.env.OPENROUTER_APP_URL || "https://chalklab.vercel.app",
       "X-Title": process.env.OPENROUTER_APP_NAME || "Chalk Lab AI Math Tutor"
     }
   : undefined;
