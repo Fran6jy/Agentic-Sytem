@@ -1,15 +1,23 @@
-# AI Math Assistant
+# Chalk Lab: AI Math Tutor
 
-A portfolio-ready math assistant that lets users ask natural-language math questions and routes the work through a LangChain.js tool-calling agent. It supports basic arithmetic, advanced expression evaluation, calculus helpers, equation solving, statistics, and matrix operations.
+**Live: [chalklab.vercel.app](https://chalklab.vercel.app)**
+
+Ask a math question in plain English, by voice, or with a photo. Chalk Lab solves it with real math tools (not LLM mental arithmetic), walks you through each step like a tutor, and draws the graph on a chalkboard. A daily challenge with XP, levels, streaks and badges keeps you coming back.
 
 ## Highlights
 
-- LangChain tool calling with structured Zod schemas
-- Express API with an OpenRouter/OpenAI-compatible path and a local demo fallback
-- React interface with example prompts, trace visibility, and polished responsive styling
-- Math toolkit powered by `mathjs`
-- Image upload: a free vision model reads a photo of a problem, then the tool agent solves it
-- Voice notes: dictate questions and have answers read aloud via the browser Web Speech API
+- **Tool-calling agent**: LangChain.js with structured Zod schemas and 17 mathjs-backed tools covering arithmetic, algebra, calculus, statistics, matrices, complex numbers and units
+- **Real equation solver**: exact roots (including complex) for polynomials up to cubic, plus numeric root search for anything else (trig, exponential, rational). Linear-only inputs are validated, so it no longer returns wrong answers for quadratics
+- **Calculus**: symbolic derivatives, definite integrals (Simpson's rule) with exact polynomial antiderivatives, and limits that report one-sided behaviour
+- **Live graphing**: an interactive chalk-style canvas you can pan, zoom and hover. It marks roots and crossings, shades integral areas, and frames the interesting region automatically
+- **A board that behaves like one**: drag the duster to rub out the writing, with falling chalk dust and a fading smear, or tap it to wipe the board clean. Tap a stick of chalk to write in white, pink or blue
+- **Real notation**: x², √ and π as you type, with × and ÷ keys; "5 x 5" means multiply, while 5x stays algebra
+- **Step-by-step tutor mode**: hides the answer and reveals one hint or step at a time
+- **Daily challenge and practice**: five seeded problems a day, the same set for everyone. Includes XP, hint penalties, levels from "Chalk Apprentice" to "Math Wizard", streaks, badges, and chalk-dust confetti
+- **Installable app**: add it to the home screen on Android (install prompt) or iPhone (guided Add to Home Screen). The challenge, graphs and demo mode work offline
+- **Photo and voice**: a vision model transcribes photos of problems, and the Web Speech API handles dictation and read-aloud
+- **Resilient**: a fallback chain across free models, per-model timeouts, and automatic fallback to the local toolkit, so the app still answers when every AI model is busy
+- **Hardened API**: per-IP rate limit, CORS restricted to your own origins, image type validation, and no upstream error leakage
 
 ## Run Locally
 
@@ -19,7 +27,7 @@ cp .env.example .env
 npm run dev:full
 ```
 
-Add `OPENAI_API_KEY` to `.env` for live LangChain tool calling. The default `.env.example` is configured for OpenRouter's free GPT-OSS model. Without a key, the app runs in demo mode and still executes the math toolkit locally.
+Add `OPENAI_API_KEY` to `.env` for live tool calling. The defaults use OpenRouter free models. Keys that start with `sk-or-` select OpenRouter automatically. Without a key, the app runs in demo mode, which still runs the math toolkit locally, draws graphs and serves challenges.
 
 Frontend: `http://127.0.0.1:5173`
 
@@ -27,7 +35,7 @@ API: `http://127.0.0.1:8787`
 
 ## Production
 
-The app is ready for a single Node web service. Express serves both the API and the built React app.
+Express serves both the API and the built React app from one Node web service.
 
 ```bash
 npm install
@@ -35,31 +43,51 @@ npm run build
 npm start
 ```
 
-For Vercel, the included `vercel.json` builds the Vite frontend and serves the Express API as a serverless function from `api/index.js`. Deploy with `vercel deploy --prod` and add the environment variables below to the project. Uploaded photos are downscaled client-side to stay within serverless request body limits.
+For Vercel, `vercel.json` builds the Vite frontend and serves the Express API as a serverless function from `api/index.js`. For Render, use the included `render.yaml` and set `OPENAI_API_KEY` as a secret.
 
-For Render, connect this GitHub repo and use the included `render.yaml`. Add `OPENAI_API_KEY` as a secret environment variable to enable live LangChain tool calling through OpenRouter. Without it, the hosted app stays usable in demo mode.
-
-Recommended Render environment:
+Environment:
 
 ```txt
 OPENAI_API_KEY=<your OpenRouter API key>
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
-OPENAI_MODEL=openai/gpt-oss-120b:free
-OPENAI_VISION_MODEL=nvidia/nemotron-nano-12b-v2-vl:free
+OPENAI_MODEL=nvidia/nemotron-3-super-120b-a12b:free,qwen/qwen3.8-27b:free,google/gemma-4-31b-it:free
+OPENAI_VISION_MODEL=qwen/qwen3.8-27b:free,google/gemma-4-31b-it:free
+MODEL_TIMEOUT_MS=60000
+ALLOWED_ORIGINS=            # optional, comma-separated; same-origin always works
+RATE_LIMIT_PER_MINUTE=20
 ```
 
-The server also supports other OpenAI-compatible providers by changing `OPENAI_BASE_URL` and `OPENAI_MODEL`. `OPENAI_VISION_MODEL` selects the multimodal model used to read uploaded images; the text model (`OPENAI_MODEL`) does the actual solving with the math tools. Voice input/output runs entirely in the browser and needs no extra configuration.
+`OPENAI_MODEL` and `OPENAI_VISION_MODEL` are comma-separated fallback chains. OpenRouter rotates and rate-limits its free models often, so the server tries each model in order and remembers the last one that worked. For consistently fast answers, put a low-cost paid model first.
+
+## Project Layout
+
+```txt
+server/
+  app.js          API: agent loop, model fallback chain, rate limit, notation normalizing
+  mathTools.js    the 18 LangChain tools (mathjs)
+  demoRouter.js   keyless local router with the same response shape
+  index.js        Express server for the API + built frontend
+api/index.js      Vercel serverless entry
+src/
+  main.jsx        app shell: board, results, history, tabs
+  components/     AnswerBoard, Graph, ChalkTray, Challenge, InstallApp, MathText, MathMarkdown
+  lib/            challenge generator, XP/streak progress, confetti
+public/           PWA manifest, service worker, icons
+```
 
 ## Example Prompts
 
-- `What is 18% of 245 plus 37 squared?`
+- `Solve x^2 - 5x + 6 = 0`
 - `Differentiate x^3 + 4x^2 - 7x + 9`
-- `Solve 2x + 9 = 33 for x`
+- `Integrate x^2 from 0 to 3`
+- `What is the limit of sin(x)/x as x approaches 0?`
+- `Where do y = x^2 and y = 2x + 3 cross?`
+- `Convert a 26.2 mile marathon to kilometres`
 - `Find the determinant of [[4, 2], [1, 3]]`
-- `Calculate the mean, median, and standard deviation of 12, 18, 21, 21, 30`
+- `Divide (3 + 2i) by (1 - 2i) and give the modulus`
 
 ## Architecture
 
-The backend exposes `POST /api/ask`, accepting a `question` and/or an `image` (base64 data URL). When an API key is present, it binds the LangChain tools to `ChatOpenAI`, points the client at the configured OpenAI-compatible base URL, lets the model choose the required tool calls, executes those tools, then asks the model to explain the result. When no key is present, it uses a small local intent router so the UI remains fully demonstrable.
+`POST /api/ask` accepts a `question` and/or an `image` (a base64 data URL). With an API key, the server binds the tools to `ChatOpenAI`, runs up to six rounds of tool calls, and asks the model for a tutor-formatted reply (Answer, numbered Steps, Why it works). The response carries a `plot`, taken from `plot_function` calls or inferred from derivative, solve and integral calls, which the React canvas graph renders. Without a key, or when every model is unavailable, a local intent router produces the same response shape.
 
-When an image is attached, the vision model first transcribes the problem from the picture; that text then flows into the same tool-calling agent, so calculations stay exact and the tool trace is preserved (the transcription is returned as `extractedFromImage`). Image understanding requires an API key — demo mode is text-only. Voice input (dictation) and output (read-aloud) are implemented on the frontend with the browser's Web Speech API.
+For photos, a vision model first transcribes the problem, and that text then goes through the same tool-calling agent, so calculations stay exact. Daily challenges are generated on the client from a date-seeded RNG, and progress is stored in `localStorage`.

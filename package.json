@@ -1,7 +1,7 @@
 {
-  "name": "ai-math-assistant",
+  "name": "chalk-lab",
   "version": "1.0.0",
-  "description": "Portfolio-grade AI math assistant powered by LangChain tool calling.",
+  "description": "Chalk Lab: an AI math tutor that solves step by step with real math tools, graphs the answer, and runs a daily challenge.",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -16,7 +16,6 @@
     "@langchain/core": "^1.0.0",
     "@langchain/openai": "^1.0.0",
     "@vitejs/plugin-react": "^5.0.0",
-    "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -32,6 +31,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
