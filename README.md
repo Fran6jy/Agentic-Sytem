@@ -1,5 +1,7 @@
 # Chalk Lab: AI Math Tutor
 
+**Live: [chalklab.vercel.app](https://chalklab.vercel.app)**
+
 Ask a math question in plain English, by voice, or with a photo. Chalk Lab solves it with real math tools (not LLM mental arithmetic), walks you through each step like a tutor, and draws the graph on a chalkboard. A daily challenge with XP, levels, streaks and badges keeps you coming back.
 
 ## Highlights
@@ -8,8 +10,11 @@ Ask a math question in plain English, by voice, or with a photo. Chalk Lab solve
 - **Real equation solver**: exact roots (including complex) for polynomials up to cubic, plus numeric root search for anything else (trig, exponential, rational). Linear-only inputs are validated, so it no longer returns wrong answers for quadratics
 - **Calculus**: symbolic derivatives, definite integrals (Simpson's rule) with exact polynomial antiderivatives, and limits that report one-sided behaviour
 - **Live graphing**: an interactive chalk-style canvas you can pan, zoom and hover. It marks roots and crossings, shades integral areas, and frames the interesting region automatically
+- **A board that behaves like one**: drag the duster to rub out the writing, with falling chalk dust and a fading smear, or tap it to wipe the board clean. Tap a stick of chalk to write in white, pink or blue
+- **Real notation**: x², √ and π as you type, with × and ÷ keys; "5 x 5" means multiply, while 5x stays algebra
 - **Step-by-step tutor mode**: hides the answer and reveals one hint or step at a time
 - **Daily challenge and practice**: five seeded problems a day, the same set for everyone. Includes XP, hint penalties, levels from "Chalk Apprentice" to "Math Wizard", streaks, badges, and chalk-dust confetti
+- **Installable app**: add it to the home screen on Android (install prompt) or iPhone (guided Add to Home Screen). The challenge, graphs and demo mode work offline
 - **Photo and voice**: a vision model transcribes photos of problems, and the Web Speech API handles dictation and read-aloud
 - **Resilient**: a fallback chain across free models, per-model timeouts, and automatic fallback to the local toolkit, so the app still answers when every AI model is busy
 - **Hardened API**: per-IP rate limit, CORS restricted to your own origins, image type validation, and no upstream error leakage
@@ -53,6 +58,22 @@ RATE_LIMIT_PER_MINUTE=20
 ```
 
 `OPENAI_MODEL` and `OPENAI_VISION_MODEL` are comma-separated fallback chains. OpenRouter rotates and rate-limits its free models often, so the server tries each model in order and remembers the last one that worked. For consistently fast answers, put a low-cost paid model first.
+
+## Project Layout
+
+```txt
+server/
+  app.js          API: agent loop, model fallback chain, rate limit, notation normalizing
+  mathTools.js    the 18 LangChain tools (mathjs)
+  demoRouter.js   keyless local router with the same response shape
+  index.js        Express server for the API + built frontend
+api/index.js      Vercel serverless entry
+src/
+  main.jsx        app shell: board, results, history, tabs
+  components/     AnswerBoard, Graph, ChalkTray, Challenge, InstallApp, MathText, MathMarkdown
+  lib/            challenge generator, XP/streak progress, confetti
+public/           PWA manifest, service worker, icons
+```
 
 ## Example Prompts
 

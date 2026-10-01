@@ -20,5 +20,5 @@ app.get(/.*/, (_request, response) => {
 });
 
 app.listen(port, () => {
-  console.log(`AI Math Assistant listening on http://127.0.0.1:${port}`);
+  console.log(`Chalk Lab listening on http://127.0.0.1:${port}`);
 });
