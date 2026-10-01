@@ -8,7 +8,8 @@ const __dirname = path.dirname(__filename);
 const distPath = path.resolve(__dirname, "../dist");
 const port = Number(process.env.PORT || 8787);
 
-app.use(express.static(distPath));
+// dotfiles: allow so /.well-known/assetlinks.json (Android app verification) is served.
+app.use(express.static(distPath, { dotfiles: "allow" }));
 
 // A missing build asset must 404, not fall through to index.html (HTML served as JS breaks the page).
 app.get(/^\/(assets|icons)\//, (_request, response) => {

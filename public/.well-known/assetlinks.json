@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.chalklab.twa",
+      "sha256_cert_fingerprints": [
+        "4F:27:AA:C8:C0:60:78:CB:7E:23:A3:53:55:8D:70:EB:9E:9F:00:9D:AC:25:1A:9E:E3:34:63:73:BE:DE:F8:FB"
+      ]
+    }
+  }
+]
